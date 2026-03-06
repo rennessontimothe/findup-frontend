@@ -1,0 +1,13 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+#root { width: 100%; min-height: 100vh; }
+
+:root {
+  --cream: #F5F4F0;
+  --navy: #07101F;
+  --navy-mid: #1B3A6B;
+  --blue: #2563EB;
+  --blue-light: #7FB3FF;
+  --gold: #D4A853;
+  --text: #0f1a2e;
+  --muted: #6b7a96;
+}
