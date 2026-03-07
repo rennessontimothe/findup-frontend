@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import ProfilePanel from './ProfilePanel'
+import GlassSurface from './components/ui/GlassSurface'
 import './Results.css'
 
 const ARTISANS = [
@@ -18,6 +19,301 @@ const ARTISANS = [
   { id: 7, name: 'Claire Dupont', metier: 'Peintre', note: 4.8, avis: 112, ville: 'Carquefou', adresse: '27 rue Voltaire, Carquefou', tel: '06 78 90 12 34', mail: 'claire.dupont@peinture.fr', site: 'https://dupont-peinture.fr', certifie: true, lat: 47.2230, lng: -1.5460, initiales: 'CD', couleur: '#D4A853',
     photos: ['https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=300', 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=300', 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=300'] },
 ]
+
+// ── MODIFIÉ : enrichi avec color, conditions et usage pour la modal
+const PROMOS = [
+  {
+    id: 'lm',
+    brand: 'Leroy Merlin',
+    desc: 'sur tout le magasin',
+    discount: '-5%',
+    code: 'FINDUP5',
+    color: '#78BE20',
+    conditions: [
+      'Valable en magasin et sur leroymerlin.fr',
+      'Non cumulable avec d\'autres offres en cours',
+      'Valable jusqu\'au 31 décembre 2025',
+      'Hors produits déjà en promotion',
+      'Une utilisation par client',
+    ],
+    usageOnline: {
+      label: 'Utiliser en ligne',
+      steps: [
+        'Ajoutez vos articles au panier sur leroymerlin.fr',
+        'À l\'étape "Paiement", saisissez le code FINDUP5',
+        'La réduction s\'applique automatiquement',
+      ],
+    },
+    usageCaisse: {
+      label: 'Utiliser en caisse',
+      steps: [
+        'Téléchargez votre bon ci-dessous',
+        'Présentez-le au passage en caisse',
+        'Le code-barres sera scanné par le caissier',
+      ],
+    },
+  },
+  {
+    id: 'bd',
+    brand: 'Brico Dépôt',
+    desc: 'sur outillage & matériaux',
+    discount: '-8%',
+    code: 'FINDUP8',
+    color: '#E2001A',
+    conditions: [
+      'Valable uniquement en magasin Brico Dépôt',
+      'Applicable sur les rayons outillage et matériaux',
+      'Non cumulable avec d\'autres promotions',
+      'Valable jusqu\'au 31 décembre 2025',
+      'Une utilisation par foyer',
+    ],
+    usageOnline: null,
+    usageCaisse: {
+      label: 'Utiliser en caisse',
+      steps: [
+        'Téléchargez votre bon ci-dessous',
+        'Présentez-le au passage en caisse',
+        'Le code-barres sera scanné par le caissier',
+      ],
+    },
+  },
+]
+
+// ── NOUVEAU : Modal "En savoir plus"
+function PromoModal({ promo, onClose }) {
+  const [copied, setCopied] = useState(false)
+  const [downloading, setDownloading] = useState(false)
+
+  function handleCopy() {
+    navigator.clipboard.writeText(promo.code)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  function handleDownload() {
+    setDownloading(true)
+    const canvas = document.createElement('canvas')
+    canvas.width = 900
+    canvas.height = 420
+    const ctx = canvas.getContext('2d')
+
+    ctx.fillStyle = '#F8F7F3'
+    ctx.fillRect(0, 0, 900, 420)
+    ctx.fillStyle = promo.color
+    ctx.fillRect(0, 0, 900, 7)
+    ctx.fillRect(0, 0, 8, 420)
+
+    ctx.fillStyle = promo.color
+    ctx.font = 'bold 20px sans-serif'
+    ctx.fillText(promo.brand.toUpperCase(), 40, 58)
+
+    ctx.fillStyle = '#07101F'
+    ctx.font = 'bold 30px sans-serif'
+    ctx.fillText('BON DE RÉDUCTION', 40, 100)
+
+    ctx.font = 'bold 96px sans-serif'
+    ctx.fillText(promo.discount, 40, 220)
+
+    ctx.fillStyle = '#6b7a96'
+    ctx.font = '22px sans-serif'
+    ctx.fillText(promo.desc, 40, 262)
+
+    ctx.setLineDash([8, 6])
+    ctx.strokeStyle = '#d0d0d0'
+    ctx.lineWidth = 1.5
+    ctx.beginPath(); ctx.moveTo(40, 292); ctx.lineTo(860, 292); ctx.stroke()
+    ctx.setLineDash([])
+
+    ctx.fillStyle = '#EEF2FF'
+    ctx.beginPath(); ctx.roundRect(40, 310, 320, 64, 12); ctx.fill()
+    ctx.strokeStyle = '#93C5FD'; ctx.lineWidth = 1.5; ctx.setLineDash([6, 4])
+    ctx.beginPath(); ctx.roundRect(40, 310, 320, 64, 12); ctx.stroke()
+    ctx.setLineDash([])
+
+    ctx.fillStyle = '#6b7a96'; ctx.font = '14px sans-serif'; ctx.fillText('Code promo', 62, 330)
+    ctx.fillStyle = '#2563EB'; ctx.font = 'bold 28px monospace'; ctx.fillText(promo.code, 62, 360)
+
+    ctx.fillStyle = '#9ca3af'; ctx.font = '14px sans-serif'
+    ctx.fillText('Valable jusqu\'au 31/12/2025 · Offre réservée aux utilisateurs findUp', 40, 406)
+
+    ctx.fillStyle = '#07101F'; ctx.font = 'bold 22px sans-serif'; ctx.fillText('find', 808, 48)
+    ctx.fillStyle = promo.color; ctx.fillText('Up', 850, 48)
+
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url; a.download = `bon-${promo.id}-${promo.code}.png`; a.click()
+      URL.revokeObjectURL(url)
+      setDownloading(false)
+    })
+  }
+
+  return (
+    <div className="promo-modal-overlay" onClick={onClose}>
+      <div className="promo-modal" onClick={e => e.stopPropagation()}>
+
+        <div className="promo-modal-header">
+          <div className="promo-modal-title-row">
+            <div>
+              <div className="promo-modal-brand">{promo.brand}</div>
+              <div className="promo-modal-offer">{promo.desc}</div>
+            </div>
+            <div className="promo-modal-discount">{promo.discount}</div>
+          </div>
+          <button className="promo-modal-close" onClick={onClose}>✕</button>
+        </div>
+
+        <div className="promo-modal-body">
+
+          {/* Code */}
+          <div className="promo-modal-section">
+            <div className="promo-modal-section-label">Votre code promo</div>
+            <div className="promo-modal-code-row">
+              <div className="promo-modal-code">{promo.code}</div>
+              <button className={`promo-modal-copy ${copied ? 'promo-modal-copy--copied' : ''}`} onClick={handleCopy}>
+                {copied
+                  ? <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>Copié !</>
+                  : <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copier</>
+                }
+              </button>
+            </div>
+          </div>
+
+          {/* Usage */}
+          <div className="promo-modal-section">
+            <div className="promo-modal-section-label">Comment utiliser ce bon ?</div>
+            <div className="promo-modal-usage-cards">
+              {promo.usageOnline && (
+                <div className="promo-modal-usage-card">
+                  <div className="promo-modal-usage-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                      <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                  </div>
+                  <div className="promo-modal-usage-title">{promo.usageOnline.label}</div>
+                  <ol className="promo-modal-steps">
+                    {promo.usageOnline.steps.map((s, i) => <li key={i}>{s}</li>)}
+                  </ol>
+                  <a href="https://www.leroymerlin.fr" target="_blank" rel="noreferrer" className="promo-modal-action-btn">
+                    Accéder au site →
+                  </a>
+                </div>
+              )}
+              {promo.usageCaisse && (
+                <div className="promo-modal-usage-card">
+                  <div className="promo-modal-usage-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                      <rect x="2" y="3" width="20" height="14" rx="2"/>
+                      <path d="M8 21h8M12 17v4"/>
+                    </svg>
+                  </div>
+                  <div className="promo-modal-usage-title">{promo.usageCaisse.label}</div>
+                  <ol className="promo-modal-steps">
+                    {promo.usageCaisse.steps.map((s, i) => <li key={i}>{s}</li>)}
+                  </ol>
+                  <button
+                    className={`promo-modal-action-btn promo-modal-action-btn--dl ${downloading ? 'loading' : ''}`}
+                    onClick={handleDownload}
+                  >
+                    {downloading ? 'Génération…' : (
+                      <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Télécharger le bon</>
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Conditions */}
+          <div className="promo-modal-section">
+            <div className="promo-modal-section-label">Conditions d'utilisation</div>
+            <ul className="promo-modal-conditions">
+              {promo.conditions.map((c, i) => (
+                <li key={i}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  {c}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── MODIFIÉ : discount mis en valeur + bouton "En savoir plus"
+function PromoCard({ promo, onInfo }) {
+  const [copied, setCopied] = useState(false)
+  function handleCopy(e) {
+    e.stopPropagation()
+    navigator.clipboard.writeText(promo.code)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+  return (
+    <div className="promo-card">
+      {/* Discount bien visible à gauche */}
+      <div className="promo-card-discount">{promo.discount}</div>
+
+      {/* Infos centre */}
+      <div className="promo-card-info">
+        <div className="promo-card-brand">{promo.brand}</div>
+        <div className="promo-card-desc">{promo.desc}</div>
+      </div>
+
+      {/* Code + en savoir plus à droite */}
+      <div className="promo-card-actions">
+        <div className={`promo-card-code ${copied ? 'promo-card-code--copied' : ''}`} onClick={handleCopy}>
+          <span>{copied ? 'Copié !' : promo.code}</span>
+          {copied ? (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          )}
+        </div>
+        <button className="promo-card-info-btn" onClick={e => { e.stopPropagation(); onInfo(promo) }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          En savoir plus
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ── MODIFIÉ : passe onInfo + affiche PromoModal
+function PromoBanner() {
+  const [activePromo, setActivePromo] = useState(null)
+  return (
+    <>
+      <div className="promo-banner">
+        <GlassSurface
+          width="100%"
+          height={70}
+          borderRadius={18}
+          backgroundOpacity={0.21}
+          blur={14}
+          brightness={55}
+          distortionScale={-60}
+          className="promo-glass"
+        >
+          <div className="promo-inner">
+            {PROMOS.map(p => <PromoCard key={p.id} promo={p} onInfo={setActivePromo} />)}
+          </div>
+        </GlassSurface>
+      </div>
+      {activePromo && <PromoModal promo={activePromo} onClose={() => setActivePromo(null)} />}
+    </>
+  )
+}
 
 function Stars({ note }) {
   return (
@@ -86,17 +382,11 @@ function ArtisanDetail({ artisan, onClose }) {
 
       {zoomedIndex !== null && (
         <div className="photo-zoom" onClick={e => e.stopPropagation()}>
-
-          {/* Topbar avec compteur et bouton fermer */}
           <div className="photo-zoom-topbar">
             <span className="photo-zoom-counter">{zoomedIndex + 1} / {photos.length}</span>
             <button className="photo-zoom-close" onClick={() => setZoomedIndex(null)}>✕</button>
           </div>
-
-          {/* Image */}
           <img src={photos[zoomedIndex]} alt="" className="photo-zoom-img" />
-
-          {/* Flèches */}
           {canPrev && (
             <button className="photo-zoom-nav photo-zoom-nav--prev"
               onClick={e => { e.stopPropagation(); setZoomedIndex(i => i - 1) }}>
@@ -113,8 +403,6 @@ function ArtisanDetail({ artisan, onClose }) {
               </svg>
             </button>
           )}
-
-          {/* Points */}
           <div className="photo-zoom-dots">
             {photos.map((_, i) => (
               <div key={i}
@@ -128,7 +416,6 @@ function ArtisanDetail({ artisan, onClose }) {
 
       <div className="detail-card" onClick={e => e.stopPropagation()}>
         <button className="detail-close" onClick={onClose}>✕</button>
-
         <div className="detail-header">
           <div className="detail-avatar-wrap">
             <div className="detail-avatar" style={{ background: artisan.couleur }}>{artisan.initiales}</div>
@@ -268,6 +555,8 @@ export default function Results() {
           </div>
         </div>
       </header>
+
+      <PromoBanner />
 
       <aside className="results-list">
         <div className="results-list-header">
