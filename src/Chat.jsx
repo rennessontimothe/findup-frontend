@@ -59,6 +59,14 @@ export default function Chat() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, isTyping])
 
+  function handleInputChange(e) {
+    setInput(e.target.value)
+    // Auto-resize
+    const ta = e.target
+    ta.style.height = 'auto'
+    ta.style.height = ta.scrollHeight + 'px'
+  }
+
   function sendMessage(text = input) {
     const msg = text.trim()
     if (!msg && images.length === 0) return
@@ -74,6 +82,11 @@ export default function Chat() {
     setInput('')
     setImages([])
     setIsTyping(true)
+
+    // Reset textarea height
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto'
+    }
 
     const lower = msg.toLowerCase()
     const match = Object.keys(SUGGESTIONS_MAP).find(k => lower.includes(k))
@@ -129,14 +142,11 @@ export default function Chat() {
               </div>
             </div>
           </div>
-          <div className="nav-actions">
-            <a href="/login" className="btn-ghost">Se connecter</a>
-            <button className="avatar-btn" onClick={() => setProfileOpen(true)}>
-              <svg viewBox="0 0 24 24">
-                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-              </svg>
-            </button>
-          </div>
+          <button className="avatar-btn" onClick={() => setProfileOpen(true)}>
+            <svg viewBox="0 0 24 24">
+              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+            </svg>
+          </button>
         </div>
       </header>
 
@@ -177,7 +187,11 @@ export default function Chat() {
       {/* SUGGESTIONS */}
       <div className="chat-suggestions">
         {suggestions.map(s => (
-          <button key={s} className="chat-chip" onClick={() => { setInput(s); inputRef.current?.focus() }}>{s}</button>
+          <button key={s} className="chat-chip" onClick={() => {
+            setInput(s)
+            const ta = inputRef.current
+            if (ta) { ta.focus(); setTimeout(() => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px' }, 0) }
+          }}>{s}</button>
         ))}
       </div>
 
@@ -193,16 +207,16 @@ export default function Chat() {
             ))}
           </div>
         )}
-        <GlassSurface width="100%" height={60} borderRadius={100} backgroundOpacity={0.21} blur={14} brightness={55} distortionScale={-60} className="chat-input-glass">
+        <GlassSurface width="100%" height="auto" borderRadius={24} backgroundOpacity={0.21} blur={14} brightness={55} distortionScale={-60} className="chat-input-glass">
           <div className="chat-input-inner">
-            <input
+            <textarea
               ref={inputRef}
-              type="text"
               value={input}
-              onChange={e => setInput(e.target.value)}
+              onChange={handleInputChange}
               onKeyDown={handleKeyDown}
               placeholder="Décrivez votre problème…"
               autoComplete="off"
+              rows={1}
             />
             <div className="chat-input-actions">
               <input type="file" id="chatFileInput" accept="image/*" multiple style={{ display: 'none' }} onChange={handleImageUpload} />

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import GlassSurface from './components/ui/GlassSurface'
 import './App.css'
 import ProfilePanel from './ProfilePanel'
@@ -7,10 +7,20 @@ export default function App() {
   const [query, setQuery] = useState('')
   const [profileOpen, setProfileOpen] = useState(false)
   const [images, setImages] = useState([])
+  const textareaRef = useRef(null)
+
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files)
     const urls = files.map(f => URL.createObjectURL(f))
     setImages(prev => [...prev, ...urls])
+  }
+
+  function handleQueryChange(e) {
+    setQuery(e.target.value)
+    // Auto-resize
+    const ta = e.target
+    ta.style.height = 'auto'
+    ta.style.height = ta.scrollHeight + 'px'
   }
 
   function goToChat() {
@@ -23,7 +33,21 @@ export default function App() {
 
   function setQueryText(t) {
     setQuery(t)
-    document.getElementById('searchInput')?.focus()
+    const ta = textareaRef.current
+    if (ta) {
+      ta.focus()
+      setTimeout(() => {
+        ta.style.height = 'auto'
+        ta.style.height = ta.scrollHeight + 'px'
+      }, 0)
+    }
+  }
+
+  function handleKeyDown(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      goToChat()
+    }
   }
 
   const chips = ["Fuite d'eau", "Panne électrique", "Carrelage", "Toiture", "Chauffage"]
@@ -89,8 +113,8 @@ export default function App() {
         <div className="search-container">
           <GlassSurface
             width="100%"
-            height={64}
-            borderRadius={100}
+            height="auto"
+            borderRadius={28}
             backgroundOpacity={0.21}
             blur={14}
             brightness={55}
@@ -98,14 +122,15 @@ export default function App() {
             className="search-glass"
           >
             <div className="search-inner">
-              <input
+              <textarea
                 id="searchInput"
-                type="text"
+                ref={textareaRef}
                 value={query}
-                onChange={e => setQuery(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && goToChat()}
+                onChange={handleQueryChange}
+                onKeyDown={handleKeyDown}
                 placeholder="Ex : ma fuite d'eau sous l'évier…"
                 autoComplete="off"
+                rows={1}
               />
               <div className="search-actions">
                 <input
