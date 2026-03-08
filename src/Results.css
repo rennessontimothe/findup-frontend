@@ -320,9 +320,9 @@
 .mobile-drawer { display: none; }
 
 /* ================================================================
-   RESPONSIVE ≤ 768px
+   RESPONSIVE ≤ 1400px
    ================================================================ */
-@media (max-width: 768px) {
+@media (max-width: 1400px) {
 
   /* Header */
   .results-header { padding: 10px 12px; }
