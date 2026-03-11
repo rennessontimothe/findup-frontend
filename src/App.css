@@ -106,7 +106,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 14px 40
 .app-band-text { font-size: .83rem; color: var(--muted); }
 .store-btn { display: flex; align-items: center; gap: 10px; padding: 10px 20px; border-radius: 14px; border: 1px solid rgba(0,0,0,.09); background: rgba(255,255,255,.65); cursor: pointer; transition: all .22s; text-decoration: none; }
 .store-btn:hover { background: rgba(255,255,255,.95); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.07); }
-.store-icon { width: 22px; height: 22px; flex-shrink: 0; }
+.store-icon { width: 22px; height: auto; flex-shrink: 0; object-fit: contain; }
 .store-small { font-size: .68rem; color: var(--muted); display: block; }
 .store-name { font-family: 'Sora', sans-serif; font-size: .92rem; font-weight: 700; color: var(--navy); }
 
@@ -153,7 +153,7 @@ footer a:hover { color: var(--text); }
   .app-band-text { display: none; }
   .app-band { gap: 10px; padding: 14px 16px; }
   .store-btn { padding: 7px 12px; gap: 7px; }
-  .store-icon { width: 16px; height: 16px; }
+  .store-icon { width: 16px; height: auto; }
   .store-small { font-size: .6rem; }
   .store-name { font-size: .78rem; }
 }
