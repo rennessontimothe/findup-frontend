@@ -1,16 +1,51 @@
-# React + Vite
+# findUp
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Application web de mise en relation avec des artisans qualifiés, propulsée par l'IA.
 
-Currently, two official plugins are available:
+## Stack technique
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React 19 + Vite
+- CSS natif (pas de Tailwind)
+- Leaflet (carte interactive OpenStreetMap)
+- Liquid Glass UI (composant GlassSurface custom)
 
-## React Compiler
+## Lancer le projet en local
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Cloner le repo
+git clone https://github.com/rennessontimothe/findup-frontend.git
+cd findup-frontend
 
-## Expanding the ESLint configuration
+2. Installer les dépendances
+npm install
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+3. Démarrer le serveur de développement
+npm run dev
+
+L'app tourne sur http://localhost:5173
+
+## Pages disponibles
+
+| Route | Description |
+|-------|-------------|
+| `/` | Page d'accueil avec recherche IA |
+| `/chat` | Chat avec l'assistant findUp |
+| `/results` | Carte + liste des artisans |
+| `/login` | Connexion / Inscription |
+
+## Structure du projet
+
+src/
+├── App.jsx / App.css → Page d'accueil
+├── Chat.jsx / Chat.css → Interface chat
+├── Results.jsx / Results.css → Carte et résultats
+├── Login.jsx / Login.css → Authentification
+├── ProfilePanel.jsx → Panneau profil
+└── components/ui/GlassSurface.jsx → Composant liquid glass
+
+## Variables CSS principales
+
+--cream: #F5F4F0
+--navy: #07101F
+--blue: #2563EB
+--gold: #D4A853
+```
