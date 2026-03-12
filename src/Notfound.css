@@ -22,8 +22,8 @@
     90deg,
     #2563EB   0px,
     #2563EB  52px,
-    #aaccff  52px,
-    #aaccff 104px
+    #ffffff  52px,
+    #ffffff 104px
   );
   opacity: 0.12;
   left: -5%;
@@ -172,11 +172,75 @@
 
 /* ── RESPONSIVE MOBILE ── */
 @media (max-width: 640px) {
-  .nf-main { gap: 12px; padding-top: 88px; }
-  .nf-roller { right: -30px; top: 12px; }
-  .nf-roller-svg { width: 28px; }
-  .nf-actions { flex-direction: column; width: 100%; max-width: 320px; }
-  .nf-btn-primary { width: 100%; justify-content: center; }
-  .nf-btn-glass-surface { width: 100% !important; }
-  .nf-btn-glass { width: 100%; justify-content: center; }
+
+  /* Page en colonne pleine hauteur */
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+  #root { display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* Nav compacte */
+  nav { padding: 10px 16px; }
+
+  /* Main occupe tout l'espace disponible entre nav et footer */
+  .nf-main {
+    flex: 1;
+    padding: 80px 24px 24px;
+    gap: 16px;
+    justify-content: center;
+    min-height: unset;
+  }
+
+  /* 404 plus adapté mobile */
+  .nf-digit {
+    font-size: clamp(4.5rem, 22vw, 6rem);
+  }
+
+  /* Titre adapté */
+  .nf-title {
+    font-size: clamp(1.2rem, 5.5vw, 1.6rem);
+    padding: 0 8px;
+  }
+
+  /* Boutons full width, espacés correctement */
+  .nf-actions {
+    flex-direction: column;
+    width: 100%;
+    margin-top: 32px;
+    margin-bottom: 32px;
+    gap: 10px;
+  }
+  .nf-btn-primary {
+    width: 100%;
+    justify-content: center;
+    height: 54px;
+    font-size: .95rem;
+  }
+  .nf-btn-glass-surface {
+    width: 100% !important;
+    height: 54px !important;
+  }
+  .nf-btn-glass {
+    width: 100%;
+    justify-content: center;
+    height: 54px;
+    font-size: .95rem;
+  }
+
+  /* App band collé en bas */
+  .app-band {
+    padding: 16px;
+    gap: 10px;
+    margin-top: auto;
+  }
+  .app-band-text { display: none; }
+  .store-btn { flex: 1; justify-content: center; padding: 10px 12px; }
+
+  /* Footer compact */
+  footer {
+    padding: 14px 16px;
+    font-size: .72rem;
+  }
+
+  /* Rubans ajustés */
+  .nf-tape--a { top: 80px; }
+  .nf-tape--c { bottom: 120px; }
 }
