@@ -49,7 +49,7 @@ export default function App() {
     }
   }
 
-  const chips = ["Fuite d'eau", "Panne électrique", "Carrelage", "Toiture", "Chauffage"]
+  const chips = ["Fuite d'eau", "Panne électrique", "Carrelage fissuré", "Porte qui grince", "Chauffage"]
 
   return (
     <>
@@ -89,14 +89,14 @@ export default function App() {
 
       <section className="hero">
         <h1 className="hero-title">
-          <span className="split-line">Trouvez le bon</span>
+          <span className="split-line">La solution à tous</span>
           <span className="split-line highlight">
-            <span className="shiny">artisan</span> en quelques secondes
+            vos <span className="shiny">travaux</span>
           </span>
         </h1>
 
         <p className="hero-sub">
-          Décrivez votre problème, notre IA analyse votre besoin et vous met en relation avec les artisans qualifiés près de chez vous.
+          Décrivez votre problème, notre IA l'analyse et vous guide vers la meilleure solution — réparer vous-même ou faire appel à un artisan qualifié près de chez vous.
         </p>
 
         {images.length > 0 && (
@@ -128,7 +128,7 @@ export default function App() {
                 value={query}
                 onChange={handleQueryChange}
                 onKeyDown={handleKeyDown}
-                placeholder="Ex : ma fuite d'eau sous l'évier…"
+                placeholder="Ex : robinet qui fuit, carrelage fissuré…"
                 autoComplete="off"
                 rows={1}
               />

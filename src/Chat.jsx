@@ -29,10 +29,40 @@ const INITIAL_MESSAGES = [
   {
     id: 1,
     from: 'bot',
-    text: "Bonjour ! Je suis votre assistant findUp. Décrivez-moi votre problème et je trouverai les meilleurs artisans près de chez vous.",
+    text: "Bonjour ! Je suis votre assistant findUp. Décrivez-moi votre problème et je trouverai la meilleure solution pour vous.",
     time: now()
   }
 ]
+
+/* ── MESSAGE DE CHOIX FINAL ── */
+function ChoiceMessage({ query }) {
+  const encodedQuery = encodeURIComponent(query)
+  return (
+    <div className="choice-message">
+      <div className="choice-message-header">
+        <div className="choice-message-icon">✦</div>
+        <div className="choice-message-title">J'ai bien cerné votre problème.</div>
+      </div>
+      <p className="choice-message-sub">Comment souhaitez-vous le résoudre ?</p>
+      <div className="choice-actions">
+        <a href={`/diy?q=${encodedQuery}`} className="choice-btn choice-btn--diy">
+          <span className="choice-btn-icon">🛠️</span>
+          <div>
+            <div className="choice-btn-label">Je le fais moi-même</div>
+            <div className="choice-btn-sub">Outils, matériaux et guide pas à pas</div>
+          </div>
+        </a>
+        <a href={`/results?q=${encodedQuery}`} className="choice-btn choice-btn--pro">
+          <span className="choice-btn-icon">👷</span>
+          <div>
+            <div className="choice-btn-label">Je fais appel à un pro</div>
+            <div className="choice-btn-sub">Artisans qualifiés près de chez vous</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  )
+}
 
 export default function Chat() {
   const [messages, setMessages] = useState(INITIAL_MESSAGES)
@@ -41,6 +71,9 @@ export default function Chat() {
   const [isTyping, setIsTyping] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [suggestions, setSuggestions] = useState(DEFAULT_SUGGESTIONS)
+  const [showChoice, setShowChoice] = useState(false)
+  const [lastUserQuery, setLastUserQuery] = useState('')
+  const [messageCount, setMessageCount] = useState(0)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
   const didInit = useRef(false)
@@ -57,19 +90,27 @@ export default function Chat() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, isTyping])
+  }, [messages, isTyping, showChoice])
 
   function handleInputChange(e) {
     setInput(e.target.value)
-    // Auto-resize
     const ta = e.target
     ta.style.height = 'auto'
     ta.style.height = ta.scrollHeight + 'px'
   }
 
+  // Détermine si on doit afficher le choix après cette réponse bot
+  // On le déclenche après le 2e échange (question + réponse de localisation)
+  function shouldShowChoice(count) {
+    return count >= 2
+  }
+
   function sendMessage(text = input) {
     const msg = text.trim()
     if (!msg && images.length === 0) return
+
+    const newCount = messageCount + 1
+    setMessageCount(newCount)
 
     const userMsg = {
       id: Date.now(),
@@ -79,11 +120,11 @@ export default function Chat() {
       time: now()
     }
     setMessages(prev => [...prev, userMsg])
+    setLastUserQuery(msg)
     setInput('')
     setImages([])
     setIsTyping(true)
 
-    // Reset textarea height
     if (inputRef.current) {
       inputRef.current.style.height = 'auto'
     }
@@ -92,14 +133,27 @@ export default function Chat() {
     const match = Object.keys(SUGGESTIONS_MAP).find(k => lower.includes(k))
     if (match) setSuggestions(SUGGESTIONS_MAP[match])
 
+    // Délai de réponse bot
     setTimeout(() => {
       setIsTyping(false)
-      setMessages(prev => [...prev, {
-        id: Date.now() + 1,
-        from: 'bot',
-        text: "Merci pour ces informations ! Je recherche les meilleurs artisans disponibles près de chez vous pour ce type d'intervention. Pouvez-vous me préciser votre ville ?",
-        time: now()
-      }])
+
+      // Après le 2e échange, on affiche le message de choix
+      if (shouldShowChoice(newCount)) {
+        setMessages(prev => [...prev, {
+          id: Date.now() + 1,
+          from: 'bot',
+          text: "Parfait, j'ai toutes les informations nécessaires pour vous aider. Voici ce que je vous propose :",
+          time: now()
+        }])
+        setShowChoice(true)
+      } else {
+        setMessages(prev => [...prev, {
+          id: Date.now() + 1,
+          from: 'bot',
+          text: "Merci pour ces informations ! Je recherche les meilleures solutions pour ce type d'intervention. Pouvez-vous me préciser votre ville ?",
+          time: now()
+        }])
+      }
     }, 1800)
   }
 
@@ -181,61 +235,74 @@ export default function Chat() {
             </div>
           </div>
         )}
+
+        {/* CARTE DE CHOIX — apparaît après le 2e échange */}
+        {showChoice && !isTyping && (
+          <div className="msg-row msg-row--bot choice-row">
+            <div className="msg-avatar">✦</div>
+            <ChoiceMessage query={lastUserQuery} />
+          </div>
+        )}
+
         <div ref={bottomRef} />
       </main>
 
-      {/* SUGGESTIONS */}
-      <div className="chat-suggestions">
-        {suggestions.map(s => (
-          <button key={s} className="chat-chip" onClick={() => {
-            setInput(s)
-            const ta = inputRef.current
-            if (ta) { ta.focus(); setTimeout(() => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px' }, 0) }
-          }}>{s}</button>
-        ))}
-      </div>
+      {/* SUGGESTIONS — masquées une fois le choix affiché */}
+      {!showChoice && (
+        <div className="chat-suggestions">
+          {suggestions.map(s => (
+            <button key={s} className="chat-chip" onClick={() => {
+              setInput(s)
+              const ta = inputRef.current
+              if (ta) { ta.focus(); setTimeout(() => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px' }, 0) }
+            }}>{s}</button>
+          ))}
+        </div>
+      )}
 
-      {/* INPUT */}
-      <div className="chat-input-area">
-        {images.length > 0 && (
-          <div className="chat-image-previews">
-            {images.map((url, i) => (
-              <div key={i} className="chat-preview-wrap">
-                <img src={url} className="chat-preview-img" alt="" />
-                <button className="chat-preview-remove" onClick={() => setImages(prev => prev.filter((_, j) => j !== i))}>✕</button>
-              </div>
-            ))}
-          </div>
-        )}
-        <GlassSurface width="100%" height="auto" borderRadius={24} backgroundOpacity={0.21} blur={14} brightness={55} distortionScale={-60} className="chat-input-glass">
-          <div className="chat-input-inner">
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              placeholder="Décrivez votre problème…"
-              autoComplete="off"
-              rows={1}
-            />
-            <div className="chat-input-actions">
-              <input type="file" id="chatFileInput" accept="image/*" multiple style={{ display: 'none' }} onChange={handleImageUpload} />
-              <button className="btn-icon" onClick={() => document.getElementById('chatFileInput').click()}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <rect x="3" y="3" width="18" height="18" rx="4"/>
-                  <circle cx="8.5" cy="8.5" r="1.5"/>
-                  <path d="M21 15l-5-5L5 21" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              <button className="btn-send" onClick={() => sendMessage()} disabled={!input.trim() && images.length === 0}>
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 19V5M5 12l7-7 7 7" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
+      {/* INPUT — masqué une fois le choix affiché */}
+      {!showChoice && (
+        <div className="chat-input-area">
+          {images.length > 0 && (
+            <div className="chat-image-previews">
+              {images.map((url, i) => (
+                <div key={i} className="chat-preview-wrap">
+                  <img src={url} className="chat-preview-img" alt="" />
+                  <button className="chat-preview-remove" onClick={() => setImages(prev => prev.filter((_, j) => j !== i))}>✕</button>
+                </div>
+              ))}
             </div>
-          </div>
-        </GlassSurface>
-      </div>
+          )}
+          <GlassSurface width="100%" height="auto" borderRadius={24} backgroundOpacity={0.21} blur={14} brightness={55} distortionScale={-60} className="chat-input-glass">
+            <div className="chat-input-inner">
+              <textarea
+                ref={inputRef}
+                value={input}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Décrivez votre problème…"
+                autoComplete="off"
+                rows={1}
+              />
+              <div className="chat-input-actions">
+                <input type="file" id="chatFileInput" accept="image/*" multiple style={{ display: 'none' }} onChange={handleImageUpload} />
+                <button className="btn-icon" onClick={() => document.getElementById('chatFileInput').click()}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <rect x="3" y="3" width="18" height="18" rx="4"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <path d="M21 15l-5-5L5 21" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <button className="btn-send" onClick={() => sendMessage()} disabled={!input.trim() && images.length === 0}>
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 19V5M5 12l7-7 7 7" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </GlassSurface>
+        </div>
+      )}
     </div>
   )
 }

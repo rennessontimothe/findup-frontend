@@ -5,6 +5,7 @@ import App from './App.jsx'
 import Login from './Login.jsx'
 import Chat from './Chat.jsx'
 import Results from './Results.jsx'
+import DIY from './DIY.jsx'
 import NotFound from './Notfound.jsx'
 
 const path = window.location.pathname
@@ -16,6 +17,8 @@ if (path === '/login') {
   root.render(<StrictMode><Chat /></StrictMode>)
 } else if (path === '/results') {
   root.render(<StrictMode><Results /></StrictMode>)
+} else if (path === '/diy') {
+  root.render(<StrictMode><DIY /></StrictMode>)
 } else if (path === '/') {
   root.render(<StrictMode><App /></StrictMode>)
 } else {
