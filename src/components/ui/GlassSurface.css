@@ -39,14 +39,28 @@
     0px 8px 24px rgba(17, 17, 26, 0.05) inset,
     0px 16px 56px rgba(17, 17, 26, 0.05) inset;
 }
+
+/* ── FALLBACK iOS / Safari — style verre Apple ── */
 .glass-surface--fallback {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(12px) saturate(1.8) brightness(1.1);
-  -webkit-backdrop-filter: blur(12px) saturate(1.8) brightness(1.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  /* Fond blanc translucide chaud — signature iOS */
+  background: rgba(255, 255, 255, 0.72);
+
+  /* Blur généreux comme UIKit */
+  backdrop-filter: blur(28px) saturate(2) brightness(1.08);
+  -webkit-backdrop-filter: blur(28px) saturate(2) brightness(1.08);
+
+  /* Bordure lumineuse fine — effet spéculaire */
+  border: 1px solid rgba(255, 255, 255, 0.9);
+
+  /* Ombres multicouches façon Material Apple */
   box-shadow:
-    0 8px 32px 0 rgba(31, 38, 135, 0.2),
-    0 2px 16px 0 rgba(31, 38, 135, 0.1),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.4),
-    inset 0 -1px 0 0 rgba(255, 255, 255, 0.2);
+    /* Reflet haut — bord lumineux */
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    /* Reflet bas — bord sombre léger */
+    inset 0 -0.5px 0 rgba(0, 0, 0, 0.06),
+    /* Ombre portée douce */
+    0 4px 24px rgba(0, 0, 0, 0.07),
+    0 1px 4px rgba(0, 0, 0, 0.05),
+    /* Halo diffus externe */
+    0 16px 48px rgba(0, 0, 0, 0.04);
 }
