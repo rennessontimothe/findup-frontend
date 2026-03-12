@@ -3,14 +3,6 @@ import GlassSurface from './components/ui/GlassSurface'
 import ProfilePanel from './ProfilePanel'
 import './Chat.css'
 
-const DEFAULT_SUGGESTIONS = [
-  "Fuite d'eau dans ma salle de bain",
-  "Panne électrique dans mon salon",
-  "Carrelage endommagé",
-  "Toiture à réparer",
-  "Chauffage en panne"
-]
-
 const SUGGESTIONS_MAP = {
   'fuite': ["C'est urgent ?", "Quel étage ?", "Eau chaude ou froide ?", "Depuis combien de temps ?"],
   'eau': ["C'est urgent ?", "Quel étage ?", "Eau chaude ou froide ?", "Depuis combien de temps ?"],
@@ -34,31 +26,56 @@ const INITIAL_MESSAGES = [
   }
 ]
 
-/* ── MESSAGE DE CHOIX FINAL ── */
+/* ── CARTE DE CHOIX FINAL ── */
 function ChoiceMessage({ query }) {
   const encodedQuery = encodeURIComponent(query)
   return (
-    <div className="choice-message">
-      <div className="choice-message-header">
-        <div className="choice-message-icon">✦</div>
-        <div className="choice-message-title">J'ai bien cerné votre problème.</div>
-      </div>
-      <p className="choice-message-sub">Comment souhaitez-vous le résoudre ?</p>
-      <div className="choice-actions">
-        <a href={`/diy?q=${encodedQuery}`} className="choice-btn choice-btn--diy">
-          <span className="choice-btn-icon">🛠️</span>
-          <div>
-            <div className="choice-btn-label">Je le fais moi-même</div>
-            <div className="choice-btn-sub">Outils, matériaux et guide pas à pas</div>
+    <div className="choice-card">
+      <div className="choice-options">
+
+        <a href={`/diy?q=${encodedQuery}`} className="choice-option choice-option--diy">
+          <div className="choice-option-left">
+            <div className="choice-option-icon-wrap choice-option-icon-wrap--diy">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+              </svg>
+            </div>
+            <div>
+              <div className="choice-option-label">Je le fais moi-même</div>
+              <div className="choice-option-sub">Outils, matériaux et guide pas à pas</div>
+            </div>
+          </div>
+          <div className="choice-option-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </div>
         </a>
-        <a href={`/results?q=${encodedQuery}`} className="choice-btn choice-btn--pro">
-          <span className="choice-btn-icon">👷</span>
-          <div>
-            <div className="choice-btn-label">Je fais appel à un pro</div>
-            <div className="choice-btn-sub">Artisans qualifiés près de chez vous</div>
+
+        <div className="choice-divider" />
+
+        <a href={`/results?q=${encodedQuery}`} className="choice-option choice-option--pro">
+          <div className="choice-option-left">
+            <div className="choice-option-icon-wrap choice-option-icon-wrap--pro">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <div>
+              <div className="choice-option-label">Je fais appel à un pro</div>
+              <div className="choice-option-sub">Artisans qualifiés près de chez vous</div>
+            </div>
+          </div>
+          <div className="choice-option-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </div>
         </a>
+
       </div>
     </div>
   )
@@ -70,7 +87,6 @@ export default function Chat() {
   const [images, setImages] = useState([])
   const [isTyping, setIsTyping] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
-  const [suggestions, setSuggestions] = useState(DEFAULT_SUGGESTIONS)
   const [showChoice, setShowChoice] = useState(false)
   const [lastUserQuery, setLastUserQuery] = useState('')
   const [messageCount, setMessageCount] = useState(0)
@@ -99,12 +115,6 @@ export default function Chat() {
     ta.style.height = ta.scrollHeight + 'px'
   }
 
-  // Détermine si on doit afficher le choix après cette réponse bot
-  // On le déclenche après le 2e échange (question + réponse de localisation)
-  function shouldShowChoice(count) {
-    return count >= 2
-  }
-
   function sendMessage(text = input) {
     const msg = text.trim()
     if (!msg && images.length === 0) return
@@ -129,20 +139,14 @@ export default function Chat() {
       inputRef.current.style.height = 'auto'
     }
 
-    const lower = msg.toLowerCase()
-    const match = Object.keys(SUGGESTIONS_MAP).find(k => lower.includes(k))
-    if (match) setSuggestions(SUGGESTIONS_MAP[match])
-
-    // Délai de réponse bot
     setTimeout(() => {
       setIsTyping(false)
 
-      // Après le 2e échange, on affiche le message de choix
-      if (shouldShowChoice(newCount)) {
+      if (newCount >= 2) {
         setMessages(prev => [...prev, {
           id: Date.now() + 1,
           from: 'bot',
-          text: "Parfait, j'ai toutes les informations nécessaires pour vous aider. Voici ce que je vous propose :",
+          text: "Parfait, j'ai bien cerné votre problème. Comment souhaitez-vous le résoudre ?",
           time: now()
         }])
         setShowChoice(true)
@@ -236,29 +240,15 @@ export default function Chat() {
           </div>
         )}
 
-        {/* CARTE DE CHOIX — apparaît après le 2e échange */}
+        {/* CARTE DE CHOIX */}
         {showChoice && !isTyping && (
-          <div className="msg-row msg-row--bot choice-row">
-            <div className="msg-avatar">✦</div>
+          <div className="choice-row">
             <ChoiceMessage query={lastUserQuery} />
           </div>
         )}
 
         <div ref={bottomRef} />
       </main>
-
-      {/* SUGGESTIONS — masquées une fois le choix affiché */}
-      {!showChoice && (
-        <div className="chat-suggestions">
-          {suggestions.map(s => (
-            <button key={s} className="chat-chip" onClick={() => {
-              setInput(s)
-              const ta = inputRef.current
-              if (ta) { ta.focus(); setTimeout(() => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px' }, 0) }
-            }}>{s}</button>
-          ))}
-        </div>
-      )}
 
       {/* INPUT — masqué une fois le choix affiché */}
       {!showChoice && (
