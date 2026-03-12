@@ -68,7 +68,6 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 14px 40
   display: flex; align-items: flex-end;
   gap: 8px; padding: 0 8px 0 22px; width: 100%;
 }
-/* Textarea accueil */
 .search-inner textarea {
   flex: 1; background: transparent; border: none; outline: none;
   font-family: 'DM Sans', sans-serif; font-size: 1rem; color: var(--text);
@@ -147,13 +146,68 @@ footer a:hover { color: var(--text); }
 .image-remove { position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; border-radius: 50%; background: var(--navy); color: white; border: none; font-size: .6rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all .2s; }
 .image-remove:hover { background: #e53e3e; transform: scale(1.1); }
 
-/* ── MOBILE ── */
+/* ── MOBILE (≤ 640px) ── */
 @media (max-width: 640px) {
   .btn-ghost { display: none; }
   .app-band-text { display: none; }
-  .app-band { gap: 10px; padding: 14px 16px; }
+
+  /* Layout : la page occupe exactement l'écran, hero prend l'espace dispo */
+  .page-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+  }
+  .hero {
+    flex: 1;
+    min-height: unset;
+    padding: 80px 20px 24px;
+    justify-content: center;
+  }
+
+  /* Nav */
+  nav { padding: 10px 16px; }
+  .nav-glass { height: 52px !important; }
+
+  /* Titre */
+  .hero-title {
+    font-size: clamp(1.9rem, 8.5vw, 2.5rem);
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+
+  /* Sous-titre */
+  .hero-sub {
+    font-size: .875rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    max-width: 100%;
+  }
+
+  /* Recherche */
+  .search-container { max-width: 100%; }
+  .search-inner { padding: 0 6px 0 16px; }
+  .search-inner textarea { font-size: .92rem; }
+  .btn-send { width: 40px; height: 40px; }
+  .btn-icon { width: 36px; height: 36px; }
+
+  /* Chips */
+  .suggestions { gap: 7px; margin-top: 10px; }
+  .chip { padding: 6px 14px; font-size: .78rem; }
+
+  /* App band */
+  .app-band { gap: 10px; padding: 12px 16px; }
   .store-btn { padding: 7px 12px; gap: 7px; }
-  .store-icon { width: 16px; height: auto; }
+  .store-icon { width: 16px; }
   .store-small { font-size: .6rem; }
   .store-name { font-size: .78rem; }
+
+  /* Footer */
+  footer { padding: 12px 16px; font-size: .72rem; }
+
+  /* Désactiver animations */
+  .hero-title, .hero-sub, .search-container, .suggestions {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }

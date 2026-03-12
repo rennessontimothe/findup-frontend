@@ -61,6 +61,7 @@ export default function App() {
 
       <ProfilePanel isOpen={profileOpen} onClose={() => setProfileOpen(false)} />
 
+      <div className="page-layout">
       <nav>
         <GlassSurface
           width="100%"
@@ -185,6 +186,7 @@ export default function App() {
       <footer>
         <p>© 2025 findUp · <a href="#">Mentions légales</a> · <a href="#">Politique de confidentialité</a></p>
       </footer>
+      </div>
     </>
   )
 }
