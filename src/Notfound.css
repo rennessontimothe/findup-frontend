@@ -170,7 +170,64 @@
 }
 .nf-btn-glass:hover { color: var(--blue, #2563EB); }
 
-/* ── RESPONSIVE MOBILE ── */
+/* ── RESPONSIVE TABLETTE (iPad Mini, Air, Pro) ── */
+@media (min-width: 641px) and (max-width: 1100px) {
+
+  .nf-main {
+    padding: 120px 48px 40px;
+    gap: 20px;
+    min-height: calc(100vh - 98px - 80px - 60px);
+  }
+
+  .nf-digit {
+    font-size: clamp(5rem, 14vw, 8rem);
+  }
+
+  .nf-title {
+    font-size: clamp(1.4rem, 3.5vw, 2rem);
+  }
+
+  /* Boutons côte à côte mais plus larges */
+  .nf-actions {
+    margin-top: 48px;
+    margin-bottom: 48px;
+    gap: 14px;
+  }
+  .nf-btn-primary {
+    height: 56px;
+    padding: 0 36px;
+    font-size: .95rem;
+  }
+  .nf-btn-glass {
+    height: 56px;
+    padding: 0 36px;
+    font-size: .95rem;
+  }
+  .nf-btn-glass-surface {
+    height: 56px !important;
+  }
+
+  /* App band centré et aéré */
+  .app-band {
+    padding: 22px 40px;
+    gap: 16px;
+  }
+  .store-btn {
+    padding: 12px 24px;
+  }
+
+  /* Footer un peu plus grand */
+  footer {
+    padding: 22px 40px;
+    font-size: .82rem;
+  }
+
+  /* Rubans plus grands sur tablette */
+  .nf-tape { height: 72px; }
+  .nf-tape--a { top: 100px; }
+  .nf-tape--b { top: 50%; }
+  .nf-tape--c { bottom: 130px; }
+}
 @media (max-width: 640px) {
 
   /* Page en colonne pleine hauteur */
