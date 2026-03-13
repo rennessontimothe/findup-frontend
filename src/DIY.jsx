@@ -46,17 +46,92 @@ const CATEGORIES = {
   }
 }
 
-/* ── PRODUCT CARD ── */
-function ProductCard({ product, index }) {
-  const [open, setOpen] = useState(false)
+/* ── BOTTOM SHEET ── */
+function StoreSheet({ product, onClose }) {
+  if (!product) return null
+  return (
+    <>
+      <div className="sheet-backdrop" onClick={onClose} />
+      <div className="sheet-container">
+        <div className="sheet-handle" />
 
+        {/* Produit */}
+        <div className="sheet-product-row">
+          <div className="sheet-product-img">
+            {product.img
+              ? <img src={product.img} alt={product.name} />
+              : <div className="sheet-product-img-placeholder" />
+            }
+          </div>
+          <div className="sheet-product-info">
+            <div className="sheet-product-name">{product.name}</div>
+            <div className="sheet-product-detail">{product.detail}</div>
+          </div>
+          <div className="sheet-product-price">{product.price}</div>
+        </div>
+
+        <p className="sheet-label">Choisissez où acheter</p>
+
+        {/* Cards stores */}
+        <div className="sheet-stores">
+
+          {/* Amazon */}
+          <a
+            href={product.amazon}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="sheet-store-card sheet-store-card--amazon"
+          >
+            <div className="sheet-store-logo-wrap sheet-store-logo-wrap--amazon">
+              <img src="/Amazon.png" alt="Amazon" className="sheet-store-logo" />
+            </div>
+            <div className="sheet-store-info">
+              <span className="sheet-store-name">Amazon</span>
+              <span className="sheet-store-hint">Livraison rapide · Prime éligible</span>
+            </div>
+            <div className="sheet-store-arrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
+                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </a>
+
+          {/* Leroy Merlin */}
+          <a
+            href={product.lm}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="sheet-store-card sheet-store-card--lm"
+          >
+            <div className="sheet-store-logo-wrap sheet-store-logo-wrap--lm">
+              <img src="/Leroy-Merlin.png" alt="Leroy Merlin" className="sheet-store-logo" />
+            </div>
+            <div className="sheet-store-info">
+              <span className="sheet-store-name">Leroy Merlin</span>
+              <span className="sheet-store-hint">Retrait en magasin · Click & Collect</span>
+            </div>
+            <div className="sheet-store-arrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
+                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </a>
+        </div>
+
+        <button className="sheet-cancel" onClick={onClose}>Annuler</button>
+      </div>
+    </>
+  )
+}
+
+/* ── PRODUCT CARD ── */
+function ProductCard({ product, index, onSelect }) {
   return (
     <div
-      className={`diy-product-card${open ? ' diy-product-card--open' : ''}`}
+      className="diy-product-card"
       style={{ animationDelay: `${0.06 * index}s` }}
-      onClick={() => setOpen(o => !o)}
+      onClick={() => onSelect(product)}
     >
-      {/* Ligne principale */}
       <div className="diy-product-row">
         <div className="diy-product-img">
           {product.img
@@ -69,33 +144,12 @@ function ProductCard({ product, index }) {
           <div className="diy-product-detail">{product.detail}</div>
         </div>
         <div className="diy-product-price">{product.price}</div>
-        <div className={`diy-product-chevron${open ? ' diy-product-chevron--open' : ''}`}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="14" height="14">
-            <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round"/>
+        <div className="diy-product-chevron">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="13" height="13">
+            <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
       </div>
-
-      {/* Panneau stores — accordéon */}
-      {open && (
-        <div className="diy-product-stores" onClick={e => e.stopPropagation()}>
-          <p className="diy-product-stores-label">Disponible sur</p>
-          <div className="diy-product-stores-row">
-            <button
-              className="diy-store-btn diy-store-btn--amazon"
-              onClick={() => window.open(product.amazon, '_blank')}
-            >
-              <img src="/Amazon.png" alt="Amazon" className="diy-link-logo" />
-            </button>
-            <button
-              className="diy-store-btn diy-store-btn--lm"
-              onClick={() => window.open(product.lm, '_blank')}
-            >
-              <img src="/Leroy-Merlin.png" alt="Leroy Merlin" className="diy-link-logo" />
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
@@ -106,6 +160,7 @@ export default function DIY() {
   const q = params.get('q') || ''
   const category = CATEGORIES[catKey] || CATEGORIES.plomberie
   const [profileOpen, setProfileOpen] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState(null)
 
   return (
     <>
@@ -113,6 +168,7 @@ export default function DIY() {
         <div className="orb orb-1" /><div className="orb orb-2" /><div className="orb orb-3" />
       </div>
       <ProfilePanel isOpen={profileOpen} onClose={() => setProfileOpen(false)} />
+      <StoreSheet product={selectedProduct} onClose={() => setSelectedProduct(null)} />
 
       <div className="diy-page-layout">
 
@@ -179,7 +235,7 @@ export default function DIY() {
             </div>
             <div className="diy-products-grid">
               {category.products.map((p, i) => (
-                <ProductCard key={p.id} product={p} index={i} />
+                <ProductCard key={p.id} product={p} index={i} onSelect={setSelectedProduct} />
               ))}
             </div>
           </section>
