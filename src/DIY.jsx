@@ -7,67 +7,95 @@ const CATEGORIES = {
   plomberie: {
     label: 'Plomberie',
     products: [
-      { id: 'p1', img: '/joint-torique.png',   name: 'Joint torique universel',     detail: 'Lot de 50 — assortiment NBR',              price: '4,90 €',  amazon: 'https://www.amazon.fr/s?k=joint+torique+plomberie' },
-      { id: 'p2', img: '/teflon.png',           name: 'Ruban PTFE (téflon)',          detail: '12 m — étanchéité filetages',              price: '2,50 €',  amazon: 'https://www.amazon.fr/s?k=ruban+teflon+ptfe' },
-      { id: 'p3', img: '/pince-multiprise.png', name: 'Pince multiprise réglable',   detail: 'Serrage joints et raccords',               price: '12,90 €', amazon: 'https://www.amazon.fr/s?k=pince+multiprise' },
-      { id: 'p4', img: '/cle-molette.png',      name: 'Clé à molette 250 mm',        detail: 'Acier chromé, poignée bi-matière',         price: '9,90 €',  amazon: 'https://www.amazon.fr/s?k=cle+molette' },
-      { id: 'p5', img: '/raccord-rapide.png',   name: 'Raccord réparation rapide',   detail: 'Sans soudure — 15 ou 22 mm',              price: '6,50 €',  amazon: 'https://www.amazon.fr/s?k=raccord+reparation+rapide+plomberie' },
+      { id: 'p1', img: '/joint-torique.png',   name: 'Joint torique universel',     detail: 'Lot de 50 — assortiment NBR',              price: '4,90 €',  amazon: 'https://www.amazon.fr/s?k=joint+torique+plomberie',              lm: 'https://www.leroymerlin.fr/recherche=joint+torique' },
+      { id: 'p2', img: '/teflon.png',           name: 'Ruban PTFE (téflon)',          detail: '12 m — étanchéité filetages',              price: '2,50 €',  amazon: 'https://www.amazon.fr/s?k=ruban+teflon+ptfe',                    lm: 'https://www.leroymerlin.fr/recherche=teflon' },
+      { id: 'p3', img: '/pince-multiprise.png', name: 'Pince multiprise réglable',   detail: 'Serrage joints et raccords',               price: '12,90 €', amazon: 'https://www.amazon.fr/s?k=pince+multiprise',                     lm: 'https://www.leroymerlin.fr/recherche=pince+multiprise' },
+      { id: 'p4', img: '/cle-molette.png',      name: 'Clé à molette 250 mm',        detail: 'Acier chromé, poignée bi-matière',         price: '9,90 €',  amazon: 'https://www.amazon.fr/s?k=cle+molette',                          lm: 'https://www.leroymerlin.fr/recherche=cle+molette' },
+      { id: 'p5', img: '/raccord-rapide.png',   name: 'Raccord réparation rapide',   detail: 'Sans soudure — 15 ou 22 mm',              price: '6,50 €',  amazon: 'https://www.amazon.fr/s?k=raccord+reparation+rapide+plomberie',  lm: 'https://www.leroymerlin.fr/recherche=raccord+reparation' },
     ]
   },
   electricite: {
     label: 'Électricité',
     products: [
-      { id: 'e1', img: '/testeur-tension.png',  name: 'Testeur de tension sans contact', detail: 'Détecte 12–1000V, sécurité max',      price: '14,90 €', amazon: 'https://www.amazon.fr/s?k=testeur+tension+sans+contact' },
-      { id: 'e2', img: '/tournevis-vde.png',    name: 'Tournevis isolés VDE',            detail: 'Jeu de 6 — testés 1000V',             price: '18,90 €', amazon: 'https://www.amazon.fr/s?k=tournevis+isoles+vde' },
-      { id: 'e3', img: '/dominos.png',          name: 'Dominos de connexion',            detail: 'Boîte 100 — fils 0.5–2.5 mm²',       price: '3,90 €',  amazon: 'https://www.amazon.fr/s?k=dominos+connexion+electrique' },
-      { id: 'e4', img: '/disjoncteur.png',      name: 'Disjoncteur unipolaire 16A',      detail: 'Remplacement standard tableau',       price: '8,90 €',  amazon: 'https://www.amazon.fr/s?k=disjoncteur+16a' },
-      { id: 'e5', img: '/multimetre.png',       name: 'Multimètre numérique',            detail: 'Tension, courant, résistance',        price: '24,90 €', amazon: 'https://www.amazon.fr/s?k=multimetre+numerique' },
+      { id: 'e1', img: '/testeur-tension.png',  name: 'Testeur de tension sans contact', detail: 'Détecte 12–1000V, sécurité max',      price: '14,90 €', amazon: 'https://www.amazon.fr/s?k=testeur+tension+sans+contact',      lm: 'https://www.leroymerlin.fr/recherche=testeur+tension' },
+      { id: 'e2', img: '/tournevis-vde.png',    name: 'Tournevis isolés VDE',            detail: 'Jeu de 6 — testés 1000V',             price: '18,90 €', amazon: 'https://www.amazon.fr/s?k=tournevis+isoles+vde',             lm: 'https://www.leroymerlin.fr/recherche=tournevis+isoles' },
+      { id: 'e3', img: '/dominos.png',          name: 'Dominos de connexion',            detail: 'Boîte 100 — fils 0.5–2.5 mm²',       price: '3,90 €',  amazon: 'https://www.amazon.fr/s?k=dominos+connexion+electrique',     lm: 'https://www.leroymerlin.fr/recherche=dominos+electrique' },
+      { id: 'e4', img: '/disjoncteur.png',      name: 'Disjoncteur unipolaire 16A',      detail: 'Remplacement standard tableau',       price: '8,90 €',  amazon: 'https://www.amazon.fr/s?k=disjoncteur+16a',                  lm: 'https://www.leroymerlin.fr/recherche=disjoncteur+16a' },
+      { id: 'e5', img: '/multimetre.png',       name: 'Multimètre numérique',            detail: 'Tension, courant, résistance',        price: '24,90 €', amazon: 'https://www.amazon.fr/s?k=multimetre+numerique',             lm: 'https://www.leroymerlin.fr/recherche=multimetre' },
     ]
   },
   peinture: {
     label: 'Peinture',
     products: [
-      { id: 'pe1', img: '/peinture-blanche.png', name: 'Peinture murale blanc mat 2,5L', detail: 'Couverture 25 m² — sans odeur',       price: '22,90 €', amazon: 'https://www.amazon.fr/s?k=peinture+murale+blanche' },
-      { id: 'pe2', img: '/rouleau.png',          name: 'Rouleau microfibre + bac',       detail: '23 cm — finition lisse garantie',     price: '7,90 €',  amazon: 'https://www.amazon.fr/s?k=rouleau+peinture+microfibre' },
-      { id: 'pe3', img: '/enduit.png',           name: 'Enduit de rebouchage 1 kg',      detail: 'Séchage rapide, ponçable en 2h',     price: '6,90 €',  amazon: 'https://www.amazon.fr/s?k=enduit+rebouchage' },
-      { id: 'pe4', img: '/ruban-masquage.png',   name: 'Ruban de masquage pro 50 m',     detail: 'Adhérence précise, sans résidu',     price: '4,50 €',  amazon: 'https://www.amazon.fr/s?k=ruban+masquage+peinture' },
-      { id: 'pe5', img: '/spatule-inox.png',     name: 'Spatule inox flexible',          detail: 'Rebouchage et lissage enduit',       price: '3,90 €',  amazon: 'https://www.amazon.fr/s?k=spatule+peinture' },
+      { id: 'pe1', img: '/peinture-blanche.png', name: 'Peinture murale blanc mat 2,5L', detail: 'Couverture 25 m² — sans odeur',       price: '22,90 €', amazon: 'https://www.amazon.fr/s?k=peinture+murale+blanche',          lm: 'https://www.leroymerlin.fr/recherche=peinture+blanche+mat' },
+      { id: 'pe2', img: '/rouleau.png',          name: 'Rouleau microfibre + bac',       detail: '23 cm — finition lisse garantie',     price: '7,90 €',  amazon: 'https://www.amazon.fr/s?k=rouleau+peinture+microfibre',     lm: 'https://www.leroymerlin.fr/recherche=rouleau+peinture' },
+      { id: 'pe3', img: '/enduit.png',           name: 'Enduit de rebouchage 1 kg',      detail: 'Séchage rapide, ponçable en 2h',     price: '6,90 €',  amazon: 'https://www.amazon.fr/s?k=enduit+rebouchage',               lm: 'https://www.leroymerlin.fr/recherche=enduit+rebouchage' },
+      { id: 'pe4', img: '/ruban-masquage.png',   name: 'Ruban de masquage pro 50 m',     detail: 'Adhérence précise, sans résidu',     price: '4,50 €',  amazon: 'https://www.amazon.fr/s?k=ruban+masquage+peinture',         lm: 'https://www.leroymerlin.fr/recherche=ruban+masquage' },
+      { id: 'pe5', img: '/spatule-inox.png',     name: 'Spatule inox flexible',          detail: 'Rebouchage et lissage enduit',       price: '3,90 €',  amazon: 'https://www.amazon.fr/s?k=spatule+peinture',                lm: 'https://www.leroymerlin.fr/recherche=spatule' },
     ]
   },
   carrelage: {
     label: 'Carrelage',
     products: [
-      { id: 'c1', img: '/colle-carrelage.png',   name: 'Colle carrelage blanche 5 kg',  detail: 'Intérieur/extérieur, prise rapide',  price: '11,90 €', amazon: 'https://www.amazon.fr/s?k=colle+carrelage' },
-      { id: 'c2', img: '/joint-carrelage.png',   name: 'Joint carrelage gris 5 kg',     detail: 'Hydrofuge, résistant aux taches',   price: '13,90 €', amazon: 'https://www.amazon.fr/s?k=joint+carrelage' },
-      { id: 'c3', img: '/truelle.png',           name: 'Truelle dentelée 6 mm',         detail: 'Répartition uniforme de la colle',  price: '5,90 €',  amazon: 'https://www.amazon.fr/s?k=truelle+carrelage' },
-      { id: 'c4', img: '/croisillons.png',       name: 'Croisillons 2 mm',              detail: 'Sachet de 100 — joints réguliers',  price: '2,90 €',  amazon: 'https://www.amazon.fr/s?k=croisillons+carrelage' },
-      { id: 'c5', img: '/spatule-joint.png',     name: 'Spatule à joint mousse',        detail: 'Application propre et homogène',   price: '4,50 €',  amazon: 'https://www.amazon.fr/s?k=spatule+joint+carrelage' },
+      { id: 'c1', img: '/colle-carrelage.png',   name: 'Colle carrelage blanche 5 kg',  detail: 'Intérieur/extérieur, prise rapide',  price: '11,90 €', amazon: 'https://www.amazon.fr/s?k=colle+carrelage',                 lm: 'https://www.leroymerlin.fr/recherche=colle+carrelage' },
+      { id: 'c2', img: '/joint-carrelage.png',   name: 'Joint carrelage gris 5 kg',     detail: 'Hydrofuge, résistant aux taches',   price: '13,90 €', amazon: 'https://www.amazon.fr/s?k=joint+carrelage',                 lm: 'https://www.leroymerlin.fr/recherche=joint+carrelage' },
+      { id: 'c3', img: '/truelle.png',           name: 'Truelle dentelée 6 mm',         detail: 'Répartition uniforme de la colle',  price: '5,90 €',  amazon: 'https://www.amazon.fr/s?k=truelle+carrelage',               lm: 'https://www.leroymerlin.fr/recherche=truelle+carrelage' },
+      { id: 'c4', img: '/croisillons.png',       name: 'Croisillons 2 mm',              detail: 'Sachet de 100 — joints réguliers',  price: '2,90 €',  amazon: 'https://www.amazon.fr/s?k=croisillons+carrelage',           lm: 'https://www.leroymerlin.fr/recherche=croisillons' },
+      { id: 'c5', img: '/spatule-joint.png',     name: 'Spatule à joint mousse',        detail: 'Application propre et homogène',   price: '4,50 €',  amazon: 'https://www.amazon.fr/s?k=spatule+joint+carrelage',         lm: 'https://www.leroymerlin.fr/recherche=spatule+joint' },
     ]
   }
 }
 
 /* ── PRODUCT CARD ── */
 function ProductCard({ product, index }) {
+  const [open, setOpen] = useState(false)
+
   return (
-    <div className="diy-product-card" style={{ animationDelay: `${0.06 * index}s` }}>
-      <div className="diy-product-img">
-        {product.img
-          ? <img src={product.img} alt={product.name} />
-          : <div className="diy-product-img-placeholder" />
-        }
+    <div
+      className={`diy-product-card${open ? ' diy-product-card--open' : ''}`}
+      style={{ animationDelay: `${0.06 * index}s` }}
+      onClick={() => setOpen(o => !o)}
+    >
+      {/* Ligne principale */}
+      <div className="diy-product-row">
+        <div className="diy-product-img">
+          {product.img
+            ? <img src={product.img} alt={product.name} />
+            : <div className="diy-product-img-placeholder" />
+          }
+        </div>
+        <div className="diy-product-text">
+          <div className="diy-product-name">{product.name}</div>
+          <div className="diy-product-detail">{product.detail}</div>
+        </div>
+        <div className="diy-product-price">{product.price}</div>
+        <div className={`diy-product-chevron${open ? ' diy-product-chevron--open' : ''}`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="14" height="14">
+            <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
       </div>
-      <div className="diy-product-text">
-        <div className="diy-product-name">{product.name}</div>
-        <div className="diy-product-detail">{product.detail}</div>
-      </div>
-      <div className="diy-product-price">{product.price}</div>
-      <button
-        className="diy-link-btn diy-link-btn--amazon"
-        onClick={() => window.open(product.amazon, '_blank')}
-        title="Voir sur Amazon"
-      >
-        <img src="/Amazon.png" alt="Amazon" className="diy-link-logo" />
-      </button>
+
+      {/* Panneau stores — accordéon */}
+      {open && (
+        <div className="diy-product-stores" onClick={e => e.stopPropagation()}>
+          <p className="diy-product-stores-label">Disponible sur</p>
+          <div className="diy-product-stores-row">
+            <button
+              className="diy-store-btn diy-store-btn--amazon"
+              onClick={() => window.open(product.amazon, '_blank')}
+            >
+              <img src="/Amazon.png" alt="Amazon" className="diy-link-logo" />
+            </button>
+            <button
+              className="diy-store-btn diy-store-btn--lm"
+              onClick={() => window.open(product.lm, '_blank')}
+            >
+              <img src="/Leroy-Merlin.png" alt="Leroy Merlin" className="diy-link-logo" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
