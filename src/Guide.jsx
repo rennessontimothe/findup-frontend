@@ -1,80 +1,165 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import GlassSurface from './components/ui/GlassSurface'
 import ProfilePanel from './ProfilePanel'
 import './Guide.css'
 
-const GUIDE_STEPS = [
-  {
-    num: 1,
-    title: 'Coupez l\'alimentation en eau',
-    body: 'Repérez le robinet d\'arrêt sous l\'évier ou au compteur général. Tournez-le dans le sens des aiguilles d\'une montre jusqu\'à résistance complète. Vérifiez en ouvrant un robinet : plus d\'eau doit couler.',
-    tip: 'Si vous ne trouvez pas le robinet d\'arrêt local, utilisez le robinet général de l\'appartement.',
-    img: null,
-    free: true,
-  },
-  {
-    num: 2,
-    title: 'Démontez le siphon',
-    body: 'Placez un seau sous le siphon. Dévissez le bouchon de vidange à la main ou avec une pince multiprise. Récupérez l\'eau résiduelle. Retirez ensuite le siphon en dévissant les écrous de raccordement.',
-    tip: 'Prenez une photo du montage avant de démonter — vous vous en remercierez au remontage.',
-    img: null,
-    free: true,
-  },
-  {
-    num: 3,
-    title: 'Inspectez et nettoyez',
-    body: 'Examinez le joint torique à l\'intérieur du raccord. S\'il est aplati, fissuré ou déformé, il est à remplacer. Nettoyez le corps du siphon à l\'eau chaude pour éliminer les dépôts.',
-    tip: 'Un joint en bon état est souple et garde sa forme ronde. Un joint défaillant est plat ou présente des craquelures.',
-    img: null,
-    free: true,
-  },
-  {
-    num: 4,
-    title: 'Remplacez le joint défaillant',
-    body: 'Insérez le nouveau joint torique dans la rainure prévue à cet effet. Assurez-vous qu\'il est bien centré et ne chevauche pas le bord. Appliquez une légère couche de graisse silicone pour faciliter l\'étanchéité.',
-    tip: null,
-    img: null,
-    free: false,
-  },
-  {
-    num: 5,
-    title: 'Remontez et testez l\'étanchéité',
-    body: 'Revissez les raccords à la main d\'abord, puis serrez d\'un quart de tour avec la pince. Ne sur-serrez pas — cela endommage les filets. Rouvrez l\'eau progressivement et observez 2 minutes.',
-    tip: 'Essuyez sec avant le test pour détecter la moindre goutte.',
-    img: null,
-    free: false,
-  },
-  {
-    num: 6,
-    title: 'Appliquez du ruban PTFE en renfort',
-    body: 'Sur les filetages métalliques, enroulez 3 à 4 tours de ruban PTFE dans le sens du filetage. Cela double l\'étanchéité et facilite le démontage futur.',
-    tip: null,
-    img: null,
-    free: false,
-  },
-]
+const GUIDE_DATA = {
+  title: 'Réparer une fuite sous évier',
+  steps: [
+    {
+      num: 1,
+      tag: 'Matériel',
+      title: 'Ce qu\'il vous faut',
+      body: 'Avant de commencer, rassemblez tout le matériel nécessaire : un joint torique de remplacement (Ø adapté à votre siphon), du ruban PTFE, une pince multiprise, un seau et un chiffon sec. Avoir tout à portée de main évite les allers-retours et réduit le temps d\'intervention.',
+      tip: 'Vérifiez le diamètre de votre joint actuel avant d\'acheter. La taille est souvent marquée sur le joint ou dans la notice du siphon.',
+      confirm: 'J\'ai tout le matériel devant moi.',
+      free: true,
+    },
+    {
+      num: 2,
+      tag: 'Mise en place',
+      title: 'Préparez la zone de travail',
+      body: 'Videz le meuble sous l\'évier. Placez un seau directement sous le siphon pour récupérer l\'eau résiduelle. Coupez l\'alimentation en eau en tournant le robinet d\'arrêt dans le sens des aiguilles d\'une montre. Ouvrez un robinet pour vider la pression dans le circuit.',
+      tip: 'Si le robinet d\'arrêt local est dur ou introuvable, coupez directement au compteur général.',
+      confirm: 'Le seau est en place et l\'eau est coupée.',
+      free: true,
+    },
+    {
+      num: 3,
+      tag: 'Première étape',
+      title: 'Démontez le siphon',
+      body: 'Dévissez le bouchon de vidange en bas du siphon à la main, puis récupérez l\'eau restante dans le seau. Dévissez ensuite les deux écrous de raccordement — celui côté lavabo et celui côté évacuation. Retirez délicatement le siphon. Prenez une photo avant de démonter pour faciliter le remontage.',
+      tip: 'Ne forcez pas avec un outil sur les raccords plastique — la main suffit, quitte à utiliser un chiffon pour le grip.',
+      confirm: 'Le siphon est démonté et posé de côté.',
+      free: true,
+    },
+    {
+      num: 4,
+      tag: 'Remplacement',
+      title: 'Changez le joint défaillant',
+      body: 'Examinez le joint torique dans la rainure du raccord. S\'il est aplati, fissuré ou déformé, retirez-le. Insérez le nouveau joint bien centré dans la rainure. Appliquez une légère couche de graisse silicone pour améliorer l\'étanchéité et faciliter le démontage futur.',
+      tip: null,
+      confirm: 'Le nouveau joint est en place.',
+      free: false,
+    },
+    {
+      num: 5,
+      tag: 'Remontage',
+      title: 'Remontez et serrez correctement',
+      body: 'Revissez les raccords à la main d\'abord dans le bon ordre (consultez votre photo). Serrez ensuite d\'un quart de tour avec la pince — jamais plus. Sur les filetages métalliques, ajoutez 3–4 tours de ruban PTFE dans le sens du filetage avant de visser.',
+      tip: 'Sur-serrer est la première cause de fissure des raccords plastique. La main + un quart de tour suffit.',
+      confirm: 'Tout est remonté et serré sans forcer.',
+      free: false,
+    },
+    {
+      num: 6,
+      tag: 'Test',
+      title: 'Testez l\'étanchéité',
+      body: 'Essuyez tout à sec avec un chiffon. Rouvrez l\'eau progressivement. Observez chaque raccord pendant 2 minutes sans bouger. Si une goutte apparaît, serrez légèrement. Si la fuite persiste, démontez et vérifiez le positionnement du joint.',
+      tip: null,
+      confirm: 'Aucune fuite après 2 minutes — réparation réussie.',
+      free: false,
+    },
+  ]
+}
 
 const FREE_COUNT = 3
 
+function useStreamingGuide() {
+  const [phase, setPhase] = useState('idle')
+  const [visibleSteps, setVisibleSteps] = useState(0)
+  const timerRef = useRef(null)
+
+  const generate = () => {
+    setPhase('generating')
+    setVisibleSteps(0)
+    let count = 0
+    const revealNext = () => {
+      count++
+      setVisibleSteps(count)
+      if (count < FREE_COUNT) {
+        timerRef.current = setTimeout(revealNext, 1000)
+      } else {
+        setTimeout(() => setPhase('done'), 500)
+      }
+    }
+    timerRef.current = setTimeout(revealNext, 800)
+  }
+
+  const retry = () => { clearTimeout(timerRef.current); generate() }
+  useEffect(() => () => clearTimeout(timerRef.current), [])
+  return { phase, visibleSteps, generate, retry }
+}
+
+function StepConfirm({ label, checked, onChange }) {
+  return (
+    <button
+      className={`step-confirm${checked ? ' step-confirm--checked' : ''}`}
+      onClick={() => onChange(!checked)}
+    >
+      <span className="step-confirm-check">
+        {checked && (
+          <svg viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2.2" width="11" height="11">
+            <path d="M2 6l3 3 5-5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        )}
+      </span>
+      <span className="step-confirm-label">{label}</span>
+    </button>
+  )
+}
+
+function StepCard({ step, index, visible }) {
+  const [confirmed, setConfirmed] = useState(false)
+  return (
+    <div className={`guide-step${visible ? ' guide-step--visible' : ''}`} style={{'--step-delay': `${index * 0.07}s`}}>
+      <div className="guide-step-left">
+        <div className={`guide-step-num${confirmed ? ' guide-step-num--done' : ''}`}>
+          {confirmed
+            ? <svg viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2.2" width="12" height="12"><path d="M2 6l3 3 5-5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            : step.num}
+        </div>
+        <div className="guide-step-line" />
+      </div>
+      <div className="guide-step-body">
+        <span className="guide-step-tag">{step.tag}</span>
+        <h3 className="guide-step-title">{step.title}</h3>
+        <div className="guide-step-img">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" width="24" height="24" opacity=".2">
+            <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/>
+            <path d="M21 15l-5-5L5 21"/>
+          </svg>
+        </div>
+        <p className="guide-step-text">{step.body}</p>
+        {step.tip && (
+          <div className="guide-step-tip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="13" height="13" style={{flexShrink:0,marginTop:1}}>
+              <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+            </svg>
+            {step.tip}
+          </div>
+        )}
+        <StepConfirm label={step.confirm} checked={confirmed} onChange={setConfirmed} />
+      </div>
+    </div>
+  )
+}
+
 export default function Guide() {
-  const params = new URLSearchParams(window.location.search)
-  const q = params.get('q') || ''
   const [profileOpen, setProfileOpen] = useState(false)
   const [unlocked, setUnlocked] = useState(false)
-
-  const freeSteps = GUIDE_STEPS.filter(s => s.free)
-  const paidSteps = GUIDE_STEPS.filter(s => !s.free)
+  const { phase, visibleSteps, generate, retry } = useStreamingGuide()
+  const freeSteps = GUIDE_DATA.steps.slice(0, FREE_COUNT)
+  const paidSteps = GUIDE_DATA.steps.slice(FREE_COUNT)
 
   return (
     <>
       <div className="bg-orbs">
-        <div className="orb orb-1" /><div className="orb orb-2" /><div className="orb orb-3" />
+        <div className="orb orb-1"/><div className="orb orb-2"/><div className="orb orb-3"/>
       </div>
       <ProfilePanel isOpen={profileOpen} onClose={() => setProfileOpen(false)} />
 
       <div className="guide-page-layout">
-
-        {/* NAV */}
         <nav>
           <GlassSurface width="100%" height={70} borderRadius={100} backgroundOpacity={0.21} blur={14} brightness={55} distortionScale={-60} className="nav-glass">
             <div className="nav-inner">
@@ -97,126 +182,97 @@ export default function Guide() {
 
           {/* HERO */}
           <section className="guide-hero">
-            <div className="guide-hero-badge">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="13" height="13">
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-              </svg>
-              Guide personnalisé par IA
-            </div>
             <h1 className="guide-hero-title">
-              Réparez votre <span className="highlight">fuite sous évier</span>
+              <span className="highlight">{GUIDE_DATA.title}</span>
             </h1>
-            <p className="guide-hero-sub">
-              6 étapes illustrées · Niveau débutant · ~45 min
-            </p>
-            <div className="guide-meta-pills">
-              <span className="guide-pill">🔧 Plomberie</span>
-              <span className="guide-pill">⏱ 45 min</span>
-              <span className="guide-pill">💶 ~15 €</span>
-            </div>
           </section>
 
-          {/* ÉTAPES GRATUITES */}
-          <section className="guide-steps-section">
-            {freeSteps.map((step, i) => (
-              <StepCard key={step.num} step={step} index={i} />
-            ))}
+          {/* IDLE — carte génération iOS */}
+          {phase === 'idle' && (
+            <section className="guide-generate-section">
+              <div className="guide-generate-card">
 
-            {/* ZONE PAYANTE */}
-            {!unlocked ? (
-              <div className="guide-paywall">
-                {/* Étapes floutées en aperçu */}
-                <div className="guide-paywall-preview">
-                  {paidSteps.map((step, i) => (
-                    <div key={step.num} className="guide-step-blurred" style={{ '--blur-delay': `${i * 0.04}s` }}>
-                      <div className="guide-step-blurred-num">{step.num}</div>
-                      <div className="guide-step-blurred-content">
-                        <div className="guide-step-blurred-title">{step.title}</div>
-                        <div className="guide-step-blurred-body">{step.body}</div>
-                      </div>
-                    </div>
-                  ))}
-                  <div className="guide-paywall-fade" />
+                <div className="guide-gen-text">
+                  <div className="guide-gen-title">Guide prêt à générer</div>
+                  <div className="guide-gen-sub">Notre IA va analyser votre problème et générer un guide de réparation étape par étape, illustré et adapté à votre situation exacte.</div>
                 </div>
 
-                {/* CTA */}
-                <div className="guide-paywall-cta">
-                  <div className="guide-paywall-lock">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="20" height="20">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                  </div>
-                  <h3 className="guide-paywall-title">3 étapes restantes</h3>
-                  <p className="guide-paywall-sub">
-                    Accédez au guide complet avec les étapes de remplacement, remontage et test d'étanchéité.
-                  </p>
-                  <div className="guide-paywall-value">
-                    <span className="guide-paywall-price">2,99 €</span>
-                    <span className="guide-paywall-price-sub">accès permanent à ce guide</span>
-                  </div>
-                  <button className="guide-paywall-btn" onClick={() => setUnlocked(true)}>
-                    Débloquer le guide complet
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="15" height="15">
+                <button className="guide-gen-btn" onClick={generate}>
+                  <span>Générer le guide</span>
+                  <div className="guide-gen-btn-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
                       <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
-                  </button>
-                  <p className="guide-paywall-reassure">
-                    Paiement sécurisé · Accès immédiat · Satisfait ou remboursé 7j
-                  </p>
-                </div>
+                  </div>
+                </button>
               </div>
-            ) : (
-              paidSteps.map((step, i) => (
-                <StepCard key={step.num} step={step} index={FREE_COUNT + i} />
-              ))
-            )}
-          </section>
+            </section>
+          )}
+
+          {/* GENERATING / DONE */}
+          {(phase === 'generating' || phase === 'done') && (
+            <section className="guide-steps-section">
+
+              {freeSteps.map((step, i) => (
+                <StepCard key={step.num} step={step} index={i} visible={i < visibleSteps} />
+              ))}
+
+              {/* Loader streaming */}
+              {phase === 'generating' && visibleSteps < FREE_COUNT && (
+                <div className="guide-step-loading">
+                  <div className="guide-loading-dots"><span/><span/><span/></div>
+                  <span className="guide-loading-text">Génération en cours…</span>
+                </div>
+              )}
+
+              {/* PAYWALL — iOS sheet, pas de preview floutée */}
+              {phase === 'done' && !unlocked && (
+                <div className="guide-paywall">
+                  <div className="guide-ios-sheet">
+                    <div className="guide-ios-handle"/>
+                    <h3 className="guide-ios-title">{paidSteps.length} étapes restantes</h3>
+                    <p className="guide-ios-sub">
+                      Débloquez le guide complet pour finaliser la réparation.
+                    </p>
+                    <div className="guide-ios-price-row">
+                      <span className="guide-ios-price">2,99 €</span>
+                      <span className="guide-ios-price-label">accès permanent</span>
+                    </div>
+                    <button className="guide-ios-btn" onClick={() => setUnlocked(true)}>
+                      Débloquer maintenant
+                    </button>
+                    <p className="guide-ios-legal">Paiement sécurisé · Accès immédiat</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Étapes débloquées */}
+              {phase === 'done' && unlocked && paidSteps.map((step, i) => (
+                <StepCard key={step.num} step={step} index={FREE_COUNT + i} visible={true} />
+              ))}
+
+            </section>
+          )}
+
+          {/* ERREUR */}
+          {phase === 'error' && (
+            <section className="guide-error">
+              <div className="guide-error-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+                  <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+                </svg>
+              </div>
+              <p className="guide-error-text">Une erreur est survenue lors de la génération.</p>
+              <button className="guide-error-retry" onClick={retry}>Réessayer</button>
+            </section>
+          )}
 
         </main>
 
         <footer>
           <p>© 2025 findUp · <a href="#">Mentions légales</a> · <a href="#">Confidentialité</a></p>
         </footer>
-
       </div>
     </>
-  )
-}
-
-function StepCard({ step, index }) {
-  return (
-    <div className="guide-step" style={{ animationDelay: `${0.08 * index}s` }}>
-      <div className="guide-step-left">
-        <div className="guide-step-num">{step.num}</div>
-        {index < GUIDE_STEPS.length - 1 && <div className="guide-step-line" />}
-      </div>
-      <div className="guide-step-body">
-        <h3 className="guide-step-title">{step.title}</h3>
-
-        {/* Image placeholder */}
-        <div className="guide-step-img">
-          <div className="guide-step-img-inner">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="28" height="28" opacity=".3">
-              <rect x="3" y="3" width="18" height="18" rx="3"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <path d="M21 15l-5-5L5 21"/>
-            </svg>
-          </div>
-        </div>
-
-        <p className="guide-step-text">{step.body}</p>
-
-        {step.tip && (
-          <div className="guide-step-tip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M12 16v-4M12 8h.01"/>
-            </svg>
-            {step.tip}
-          </div>
-        )}
-      </div>
-    </div>
   )
 }
