@@ -31,6 +31,7 @@ L'app tourne sur http://localhost:5173
 | `/chat` | Chat avec l'assistant findUp |
 | `/results` | Carte + liste des artisans |
 | `/login` | Connexion / Inscription |
+| `/diy` | Lien objet + Guide |
 
 ## Structure du projet
 
@@ -40,6 +41,7 @@ src/
 ├── Results.jsx / Results.css → Carte et résultats
 ├── Login.jsx / Login.css → Authentification
 ├── ProfilePanel.jsx → Panneau profil
+├── DIY.jsx / DIY.css → Guide et Achat
 └── components/ui/GlassSurface.jsx → Composant liquid glass
 
 ## Variables CSS principales
