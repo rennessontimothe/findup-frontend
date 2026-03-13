@@ -1,7 +1,3 @@
-/* ══════════════════════════════════════════════
-   DIY.css
-   ══════════════════════════════════════════════ */
-
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -324,8 +320,6 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 14px 40
   object-fit: contain;
 }
 
-
-
 /* ══ GUIDE TEASER ══ */
 .diy-guide-section {
   animation: fadeUp .65s ease .24s both;
@@ -409,46 +403,91 @@ footer a:hover { color: var(--text); }
 .panel-item-icon { width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .panel-item-icon svg { width: 18px; height: 18px; }
 
-/* ══ RESPONSIVE tablette 641–1100px ══ */
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════ */
+
+/* ── Tablette 641–1100px ── */
 @media (min-width: 641px) and (max-width: 1100px) {
   nav { padding: 12px 24px; }
-  .diy-main { max-width: 680px; padding: 108px 28px 52px; gap: 48px; }
-  .diy-guide-cta-block { min-width: 170px; padding: 28px 20px; }
+  .diy-main { max-width: 680px; padding: 104px 28px 52px; gap: 44px; }
+  .diy-hero-title { font-size: clamp(2rem, 4.5vw, 3rem); }
 }
 
-/* ══ RESPONSIVE mobile ≤ 640px ══ */
+/* ── Mobile ≤ 640px ── */
 @media (max-width: 640px) {
+
+  /* Nav */
   .btn-ghost { display: none; }
-  nav { padding: 10px 16px; }
-  .nav-glass { height: 52px !important; }
-  .nav-back { font-size: .8rem; padding: 6px 12px 6px 8px; gap: 5px; }
+  nav { padding: 10px 14px; }
+  .nav-glass { height: 54px !important; }
+  .nav-back { width: 36px; height: 36px; }
 
-  .diy-main { padding: 80px 16px 44px; gap: 44px; }
-  .diy-hero-title { font-size: clamp(1.9rem, 8.5vw, 2.6rem); }
-  .diy-hero-sub { font-size: .875rem; }
-
-  .diy-how-step { padding: 16px 18px; gap: 14px; }
-
-  .diy-products-grid { border-radius: 18px; }
-  .diy-product-card { padding: 14px 16px; gap: 10px; }
-  .diy-product-name { font-size: .86rem; }
-  .diy-shop-btn { height: 36px; font-size: .76rem; }
-
-  /* Guide en colonne sur mobile */
-  .diy-guide-inner {
-    grid-template-columns: 1fr;
+  /* Layout — padding-top augmenté pour plus d'air sous la nav */
+  .diy-main {
+    padding: 110px 16px 48px;
+    gap: 36px;
   }
-  .diy-guide-body { padding: 24px 20px 20px; gap: 12px; }
-  .diy-guide-desc { max-width: 100%; font-size: .84rem; }
-  .diy-guide-title { font-size: 1.15rem; }
 
-  .diy-guide-cta-block {
-    border-left: none;
-    border-top: 1px solid rgba(37,99,235,0.1);
-    padding: 20px;
-    min-width: unset;
+  /* Hero */
+  .diy-hero { gap: 10px; }
+  .diy-hero-title {
+    font-size: clamp(1.85rem, 8vw, 2.4rem);
+    letter-spacing: -.03em;
+  }
+  .diy-hero-sub {
+    font-size: .82rem;
+    line-height: 1.6;
+  }
+  .diy-fallback-row { margin-top: 2px; }
+  .diy-fallback-text { font-size: .8rem; }
+  .diy-fallback-link { font-size: .8rem; }
+
+  /* Section produits */
+  .diy-section { gap: 14px; }
+  .diy-section-title { font-size: 1.2rem; }
+  .diy-section-sub { font-size: .8rem; }
+
+  /* Cards produit */
+  .diy-products-grid { gap: 7px; }
+  .diy-product-card {
+    padding: 12px 14px;
+    gap: 11px;
+    border-radius: 14px;
+  }
+  .diy-product-img {
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+  }
+  .diy-product-name {
+    font-size: .82rem;
+    white-space: normal;
+  }
+  .diy-product-detail { font-size: .7rem; }
+  .diy-product-price { font-size: .88rem; }
+  .diy-link-btn { padding: 6px 10px; }
+  .diy-link-logo { height: 16px; }
+
+  /* Guide teaser */
+  .diy-guide-teaser {
+    padding: 16px 18px;
+    border-radius: 14px;
     gap: 12px;
   }
-  .diy-guide-price { font-size: 2rem; }
-  .diy-guide-cta { font-size: .86rem; padding: 12px 18px; }
+  .diy-guide-teaser-hook {
+    font-size: .88rem;
+  }
+  .diy-guide-teaser-sub { font-size: .74rem; }
+}
+
+/* ── Très petit mobile ≤ 380px ── */
+@media (max-width: 380px) {
+  .diy-main { padding: 100px 12px 40px; gap: 30px; }
+  .diy-hero-title { font-size: 1.7rem; }
+  .diy-product-card { gap: 9px; padding: 11px 12px; }
+  .diy-product-img { width: 44px; height: 44px; }
+  .diy-product-name { font-size: .78rem; }
+  .diy-product-price { font-size: .82rem; }
+  .diy-link-logo { height: 14px; }
 }
